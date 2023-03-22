@@ -275,3 +275,11 @@ Group by allows you to group columns and functions within the same selection.
 SELECT country_of_birth, COUNT(5) FROM person
 GROUP BY country_of_birth HAVING COUNT(*) > 5
 ORDER BY country_of_birth ASC;
+
+
+----
+side note:
+Don't use NOT IN with null values.
+Use NOT EXISTS or specify NOT NULL in the WHERE clause.
+[?] Lookup why once u are a professional
+----
