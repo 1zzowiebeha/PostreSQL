@@ -282,4 +282,19 @@ side note:
 Don't use NOT IN with null values.
 Use NOT EXISTS or specify NOT NULL in the WHERE clause.
 [?] Lookup why once u are a professional
+[?] Big questions
+
+[?] Console Code chars 1252
+Why doesn't it appear in ms documentation?
+Warning: console code.... 437
+[?] Group By algorithm???
 ----
+
+
+# min max average
+
+MIN()
+MAX()
+AVERAGE()
+ROUND()
+SELECT make,model,MAX(price) FROM car GROUP BY make,model ORDER BY MAX(price) LIMIT 1;
