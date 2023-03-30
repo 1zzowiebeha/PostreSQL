@@ -298,3 +298,7 @@ MAX()
 AVERAGE()
 ROUND()
 SELECT make,model,MAX(price) FROM car GROUP BY make,model ORDER BY MAX(price) LIMIT 1;
+
+[!] PSA: when reading Postgres documentation, assume each paragraph
+    .. is its own self contained piece of info. (i.e don't assume it is
+    ..      referencing any previous content.)
