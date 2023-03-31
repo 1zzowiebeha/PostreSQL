@@ -1,0 +1,3 @@
+GROUP BY essentially allows grouping of Aggregate Functions (functions that act on entire columns)
+and of normal columns. It allows you to combine (group) these aggregate columns, and place them next to
+other columns you select, all in a single selection.

@@ -262,11 +262,15 @@ select * from person fetch first row only;
 IN reduces redundant or chains.
 SELECT * FROM person WHERE country_of_birth IN ('UK','US','FR','DE','IR');
 
+But use Not Exists instead of Not in.
+
 # where between
 
 SELECT * FROM person
 WHERE date_joined
 BETWEEN DATE '2000-02-23' AND '2023-02-17';
+
+Don't use between. Use greater than/less than operators.
 
 # Like and iLike
 
