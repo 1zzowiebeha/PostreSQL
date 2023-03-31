@@ -102,6 +102,11 @@ if you have multiple queries on the screen, just highlight the one you want and 
 
 [!] can't have an ending comma if passing parameters for some reason.. kinda dumb stupid
 
+
+
+
+
+
 ######
 ######
 ######
@@ -144,9 +149,9 @@ CREATE TABLE <table_name> (
 )
 CREATE TABLE person (
     id int,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    gender VARCHAR(6),
+    first_name VARCHAR(),
+    last_name VARCHAR(),
+    gender VARCHAR(20),
     date_of_birth TIMESTAMP -- using a DATE might be better here 
                              -- since we don't need seconds & miliseconds
     ...
