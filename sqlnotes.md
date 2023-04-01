@@ -277,6 +277,8 @@ Don't use between. Use greater than/less than operators.
 SELECT * from person where email like '%@google.@';
 SELECT * from person where email like '%@%.___';
 
+ILike is case-insensitive like
+
 # Group by & Having
 
 Group by allows you to group columns and functions within the same selection.
