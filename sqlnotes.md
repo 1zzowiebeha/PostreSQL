@@ -313,3 +313,73 @@ SELECT make,model,MAX(price) FROM car GROUP BY make,model ORDER BY MAX(price) LI
 [!] PSA: when reading Postgres documentation, assume each paragraph
     .. is its own self contained piece of info. (i.e don't assume it is
     ..      referencing any previous content.)
+    
+# arithmetic
+select (expression);
+select 1+2;
+select 5^2;
+select 6*2;
+select factorial(bigint) -> numeric;
+select 10 % 3; -> 1
+
+# rounding
+round(numeric/double precision) -> numberic/double precision
+
+# Coalesce (handling non-existant variables)
+Coalesce will go down the parameter list
+    until a non-null is given.
+
+# Nullif (handling equal values/div by 0)
+
+
+
+select coalesce( (10 / nullif( 10, 0))::text, 'Balance empty.' );
+
+# timestamps
+now()
+
+
+select now();
+select now()::date;
+select now()::time;
+
+casting.
+
+select (now() - interval '9 months')::date;
+
+# extraction
+
+select extract(month from now());
+
+DAY
+DOW - day of week
+CENTURY
+
+# age function
+
+select age(now(), '2002-08-21');
+
+[!] Daily reminder. Never drop a table in production.
+[!] And also, Never rebase on a remote, or remote-based code.
+
+# Adding / removing constraints
+alter table if exists people
+drop constraint if exists pk_...;
+
+alter table if exists people
+add primary key (column);
+
+[!!!!!] ALWAYS select before you delete. Save yourself.
+Don't do it in production. But also don't delete your entire
+local db.
+
+#### pgdump
+pg_dump -d test -U postgres -h localhost -p 5432 -f C:\Users\z\Downloads\test_db_dump_ya.sql -v
+###
+
+# Unique
+
+alter table people add constraint <optional_name> <constraint> (id);
+
+# Check constraint
+Check cheeeck!!!
