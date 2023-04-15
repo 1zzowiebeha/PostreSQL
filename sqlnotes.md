@@ -4,6 +4,20 @@ FAQ
 Postgresql exercises
 Postgresql in aws
 Postgresql in django
+"Relational Algebra" ( it should go first before SQL ), the Entity Relationship model, DB Normalization, and how to translate that into an Object and Class Oriented model ... 
+https://towardsdatascience.com/explain-sql-joins-the-right-way-f6ea784b568b?gi=534a4c8cd7da
+
+
+Stuff I will need to know:
+
+Views
+Joins
+one-to-one
+one-to-many
+many-to-many
+Schemas
+Postgres in AWS
+Postgres in Django
 
 # Hour 1:
 
@@ -381,5 +395,191 @@ pg_dump -d test -U postgres -h localhost -p 5432 -f C:\Users\z\Downloads\test_db
 
 alter table people add constraint <optional_name> <constraint> (id);
 
+How is it different from a primary key?
+A primary key is used for relational actions (joins,views). It ensures it is unique for this purpose.
+It is the equivalent of NOT NULL UNIQUE. There can only be one primary key (however that key can span multiple columns!!!). A unique b-tree index is created.
+Unique ensures the column is unique (that's it).
+
 # Check constraint
 Check cheeeck!!!
+
+alter table <table>
+add constraint <constraint_name>
+check (<conditional>);
+
+Can be used for instance to check that product value should be > 0.
+
+* is implicit in DELETE FROM <table>.
+
+# delete
+
+[!] Never EVER use this in a production database. Never. You will get into massive trouble. Legal trouble if there are no backups.
+
+DML - Database Management Language (insert update delete replace)
+DQL - Database Query Language (select)
+DDL - Database Definition Language (create drop)
+
+[!] Always have a WHERE clause for UPDATE and DELETE. Otherwise you may delete the entire table.
+
+
+# Duplicate keys / Conflict do nothing
+INSERT INTO table (id, name) VALUES (0, 'hello')
+ON CONFLICT (id) DO NOTHING;
+
+if there is an error/collision, do nothing.
+
+Column parameters can only be Unique or Primary Key. You can specify multiple columns.
+
+# Upsert
+INSERT INTO table (id, name) VALUES (0, 'hello')
+ON CONFLICT (id) DO UPDATE
+SET email=EXCLUDED.email,
+last_name = EXCLUDED.last_name;
+
+#### schema
+Note that, by default, every user has the CREATE and USAGE on the public schema.
+####
+[?] When to use SET CONSTRAINT <constraint_name> DEFERRED,...;
+####
+
+# Relationships
+Many-to-One
+One-to-One
+Many-to-Many
+
+[!!!!!] You can perform table queries on multiple tables.
+
+# One-to-One
+	car_id BIGINT REFERENCES car(id),
+	UNIQUE(car_id)
+    
+UPDATE person SET car_id = 2 WHERE id = 1;
+
+# Inner join
+Inner join takes what is common to both tables.
+One foreign key present in both tables will be selected.
+
+If primary key & foreign key are not present in both tables,
+    that row will not be selected.
+    
+SELECT * FROM person
+JOIN car ON person.car_id = car.id;
+
+(You can select from multiple tables too!)
+select * from person,car
+where person.car_id = car.id;
+
+
+Awesome equivalent queries!
+SELECT p.first_name, c.make, c.model, c.price
+FROM person p, car c
+WHERE p.car_id = c.id;
+
+SELECT p.first_name, c.make, c.model, c.price
+FROM person p
+INNER JOIN car c ON p.car_id = c.id;
+
+## Expanded display mode
+\x
+##
+
+(You can also select specific columns from each table)
+select person.first_name, car.make, car.model, car.price
+from person
+join car on person.car_id = car.id;
+
+# Left Join
+
+All rows specific to left table, and all rows common to both tables.
+
+Not equivalent to a `select * from person,car;`, as
+    that statement would not show you relationships.
+    
+`select * from person where car_id is null;`
+(Left join without relationships. (null foreign key))
+```sql
+select * from person
+left join car on car.id = person.car_id
+where car.* is null;
+```
+
+* There exists the table.* column, which can be used for comparisons.
+
+[!] NULL does not equal NULL. NULL is not a value.
+    It cannot be compared to another value.
+    `where x is null` checks whether x is a null value.
+    `where x = null`  checks whether x equals null.
+                        But NULL doesn't equal NULL.
+                        So it is never true, never false.
+
+You can't delete a foreign key relationship, without
+    1. Delete the parent row containing the foreign key reference
+    2. Setting the parent's foreign key reference to null
+    3. Delete the child row
+    
+Delete a child row in a one-to-one?
+```sql
+BEGIN;
+UPDATE person SET car_id = null WHERE id = 9000;
+DELETE FROM car WHERE id = 12;
+COMMIT;
+```
+
+### Transactions ####
+A transaction either happens completely or not at all.
+
+All the updates made by a transaction are logged in permanent storage (i.e., on disk) before the transaction is reported complete.
+
+Updates made by an open transaction are invisible to other transactions, until the transaction is complete, whereupon
+all the updates become visible simultaneously.
+
+Single statements are implicitely made into a transaction in Postgres. If the statement is successfull, it is COMMIT ted.
+This is called a transaction block.
+
+[!!!!!] Some client libraries issue BEGIN and COMMIT commands automatically, so you get this without asking. Check the documentation for the interface you are using!
+
+We can ROLLBACK during a commit to undo our changes (maybe we see someone's balance goes negative when we try to debit money.)
+
+You can also ROLLBACK TO <savepoint> if you have a SAVEPOINT <savepoint> defined in the transaction block.
+
+Changes after the savepont will be discarded once rolled back. After rolling back,
+you may continue to roll back to it, since it remains defined.
+
+When the transaction is committed, rolled-back actions never become visible at all.
+
+```sql
+BEGIN;
+UPDATE accounts SET balance = balance - 100.00
+    WHERE name = 'Alice';
+SAVEPOINT my_savepoint;
+UPDATE accounts SET balance = balance + 100.00
+    WHERE name = 'Bob';
+-- oops ... forget that and use Wally's account
+ROLLBACK TO my_savepoint;
+UPDATE accounts SET balance = balance + 100.00
+    WHERE name = 'Wally';
+COMMIT;
+```
+
+`ROLLBACK TO` is the only way to regain control of a transaction block that was put in aborted state by the system due to an error, short of rolling it back completely and starting again.
+###### END Transaction info
+
+##### VIEWS !!!! #####
+Making liberal use of views is a key aspect of good SQL database design. Views allow you to encapsulate the details of the structure of your tables, which might change as your application evolves, behind consistent interfaces.
+
+Views can be used in almost any place a real table can be used. Building views upon other views is not uncommon.
+
+```sql
+CREATE VIEW basic_patient_data AS
+    SELECT p.name, pd.temperature, pd.is_sick, pd.date, pd.location
+    FROM patient as p, patient_data as pd
+    WHERE pd.data_id = p.id;
+
+-- or
+CREATE VIEW basic_patient_data AS
+    SELECT p.name, pd.temperature, pd.is_sick, pd.date, pd.location
+    FROM patient p
+    INNER JOIN patient_data pd ON pd.data_id = p.id;
+```
+
+#### END (basic) VIEW OVERVIEW ####
