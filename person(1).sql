@@ -1,14 +1,14 @@
 create table person (
-	id BIGSERIAL NOT NULL PRIMARY KEY,
-	first_name VARCHAR(50) NOT NULL,
-	last_name VARCHAR(50) NOT NULL,
-	email VARCHAR(50) NOT NULL,
-	gender VARCHAR(50) NOT NULL,
+	id BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
+	first_name VARCHAR NOT NULL,
+	last_name VARCHAR NOT NULL,
+	email VARCHAR UNIQUE NOT NULL,
+	gender VARCHAR NOT NULL,
 	date_of_birth DATE,
-	country_of_birth VARCHAR(50) NOT NULL 
+	country_of_birth VARCHAR NOT NULL,
+	
+	PRIMARY KEY (id)
 );
-insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth)
-values ('Eddie', 'Domsalla', 'edomsalla0@whitehouse.gov', 'Male', '3/2/2023', 'IE');
 
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Heddie', 'Greenalf', 'hgreenalf1@ucla.edu', 'Female', '12/2/2022', 'PH');
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Lara', 'Tilliards', 'ltilliards2@blogspot.com', 'Bigender', '11/12/2022', 'ID');
@@ -38,7 +38,7 @@ insert into person (first_name, last_name, email, gender, date_of_birth, country
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Caitrin', 'Traher', 'ctraherq@mlb.com', 'Female', '2/11/2023', 'CN');
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Laural', 'Fontanet', 'lfontanetr@sakura.ne.jp', 'Female', '12/11/2022', 'BR');
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Camey', 'Jack', 'cjacks@odnoklassniki.ru', 'Male', '2/26/2023', 'PE');
-insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Zelig', 'Springate', 'zspringatet@noaa.gov', 'Male', '7/11/2022', 'CN');
+
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Debby', 'Willcott', 'dwillcottu@nifty.com', 'Female', '7/20/2022', 'IQ');
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Kinna', 'Sherrington', 'ksherringtonv@blinklist.com', 'Female', '9/7/2022', 'CN');
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Babbie', 'Haldane', 'bhaldanew@surveymonkey.com', 'Female', '7/12/2022', 'CN');

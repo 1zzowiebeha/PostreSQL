@@ -488,7 +488,9 @@ select person.first_name, car.make, car.model, car.price
 from person
 join car on person.car_id = car.id;
 
-# Left Join
+#
+## Left Join
+#
 
 All rows specific to left table, and all rows common to both tables.
 
@@ -514,8 +516,8 @@ where car.* is null;
 
 You can't delete a foreign key relationship, without
     1. Delete the parent row containing the foreign key reference
-    2. Setting the parent's foreign key reference to null
-    3. Delete the child row
+    2. Setting the parent's foreign key reference to null,
+       Delete the child row
     
 Delete a child row in a one-to-one?
 ```sql
@@ -525,7 +527,30 @@ DELETE FROM car WHERE id = 12;
 COMMIT;
 ```
 
+
+------------------------------------------
+[!!!!!!!!!!!!] Cascade deletion: Bad practice!
+    We should always have control over our data,
+    and know exactly what will occur.
+    Explicit is better than implicit.
+    
+    You should not delete data without knowing what you're doing.
+------------------------------------------
+
+# Exporting query results to CSV
+
+
+##### My own research:
+
+
+
+
+
+####
+
+######
 ### Transactions ####
+######
 A transaction either happens completely or not at all.
 
 All the updates made by a transaction are logged in permanent storage (i.e., on disk) before the transaction is reported complete.
@@ -562,9 +587,17 @@ COMMIT;
 ```
 
 `ROLLBACK TO` is the only way to regain control of a transaction block that was put in aborted state by the system due to an error, short of rolling it back completely and starting again.
-###### END Transaction info
 
+[!!] Use it for multiple statements
+
+[!!!!] You cannot roll back a transaction once it has commited. You will need to restore the data from backups, or use point-in-time recovery, which must have been set up before the accident happened.
+####
+###### END Transaction info
+####
+
+####
 ##### VIEWS !!!! #####
+####
 Making liberal use of views is a key aspect of good SQL database design. Views allow you to encapsulate the details of the structure of your tables, which might change as your application evolves, behind consistent interfaces.
 
 Views can be used in almost any place a real table can be used. Building views upon other views is not uncommon.
@@ -581,5 +614,100 @@ CREATE VIEW basic_patient_data AS
     FROM patient p
     INNER JOIN patient_data pd ON pd.data_id = p.id;
 ```
-
+###
 #### END (basic) VIEW OVERVIEW ####
+###
+
+
+### Clusters
+A collection of databases governed by a single
+instance of the Postgres server is called a Cluster.
+By default, db postgres,template0,template1 are created in a cluster.
+
+In filesystem terms, a cluster is a single directory.
+You must initialize a directory via initdb while logged in to user `postgres`.
+
+...
+##### end cluster
+
+### Schemas
+A database contains one or more named Schemas.
+Schemas contain tables, datatypes, functions, operators, etc.
+User permissions can be set on schemas.
+
+They are commonly used to give users acess
+    without interfering with one another.
+Also for organizing database objects into groups to make them
+    more manageable.
+Third party applications can also be put into separate schemas
+    so that no naming conflicts arise.
+
+Schemas are analogous (not synonymous) to directories at the os level. Schemas cannot be nested however.
+
+CREATE SCHEMA myschema;
+CREATE TABLE myschema.mytable ();
+DROP SCHEMA myschema;
+DROP SCHEMA myschema CASCADE;
+CREATE SCHEMA [schema_name] AUTHORIZATION user_name;
+    ^ create schema and set ownership
+    ^ omission of schema_name results in setting name to user_name.
+    ^ schemas prefixed with pg_ are reserved for the system. they cannot be created by users.
+
+Qualified name: `schema.table`
+Pro forma SQL standard compliance: `database.schema.table`
+    ^ must be connected to same db. unnecessary.
+    
+If you omit the schema name when creating tables/objects, it defaults to public.
+
+CREATE TABLE products ();
+CREATE TABLE public.products ();
+are equal.
+
+Qualified names are tedious to write, and it's often best not to wire a particular schema name into applications
+
+[!!!] Due to the prevalence of unqualified names in queries and their use in PostgreSQL internals, adding a schema to search_path effectively (en)trusts all users (with) having CREATE privilege on that schema.
+
+When you run an ordinary query, a malicious user able to create objects in a schema of your search path can take control and execute arbitrary SQL functions as though you executed them.
+
+This is achievable if another user executes `select foo();` and the attacker creates `create foo();` on their schema. By adding a schema to the schema_path, you enable foo() to be selected everywhere in the db.
+
+[!!!!!] The first schema named in the search path is called the current schema. If no schema is specified in CREATE TABLE, they go into the current schema (first schema in the search path).
+
+SHOW search_path;
+Default schema is "$user", public
+SET search_path TO myschema,public; -- if we don't want "$user".
+
+There is nothing special about the public schema except that it exists by default. It can be dropped, too.
+
+OPERATOR(schema.operator)
+`SELECT 3 OPERATOR(pg_catalog.+) 4;`
+
+In practice one usually relies on the search path for operators, so as not to have to write anything so ugly as that.
+
+SET search_path TO myschema,public;
+
+When a database does not use a secure schema usage pattern, users wishing to securely query that database would take protective action at the beginning of each session. Specifically, they would begin each session by setting search_path to the empty string or otherwise removing schemas that are writable by non-superusers from search_path.
+
+Begin user_path with $user and give each user their own private schema.
+`CREATE SCHEMA alice AUTHORIZATION alice;`
+No secure schema pattern exists if the db owner is untrusted.
+[5.9.6] Initial setup for db admin
+Use this usage pattern, then use qualified names to access the public schema.
+
+Only using public is acceptable if the db has a single user or a few mutually-trusting users.
+
+Also, there is no concept of a public schema in the SQL standard. For maximum conformance to the standard, you should not use the public schema.
+
+Some SQL database systems might not implement schemas at all, or provide namespace support by allowing (possibly limited) cross-database access. If you need to work with those systems, then maximum portability would be achieved by not using schemas at all.
+
+go back over: search_path?, usage patterns, 
+Is search_path per user or shared across all users? I can't seem to find documentation that explains this
+######
+
+[!] Reminder of a shorthand syntax:
+```sql
+    insert into person values ('jon', 'smith', 'male', null),
+                              ('mary', 'jane', 'female', 'mj@spiderman.com');
+```            
+
+##### Exporting query results to an HTML table
