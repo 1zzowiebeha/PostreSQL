@@ -1,0 +1,6 @@
+id,first_name,last_name,gender,email,date_of_birth,country_of_birth,car_id,id,make,model,price
+2,Omar,Colmore,Male,,1921-04-03,Finland,1,1,Land Rover,Sterling,87665.38
+1,Fernanda,Beardon,Female,fernandab@is.gd,1953-10-28,Comoros,2,2,GMC,Acadia,17662.69
+4,John,Doner,Male,James@doo.com,2005-03-22,Ukraine,3,3,Land Rover,Ford,500.99
+9000,Zelig,Springate,zspringatet@noaa.gov,Male,2022-07-11,CN,,,,,
+3,John,Matuschek,Male,john@feedburner.com,1965-02-28,England,,,,,

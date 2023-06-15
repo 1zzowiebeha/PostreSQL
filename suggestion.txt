@@ -1,0 +1,30 @@
+https://www.postgresql.org/account/comments/new/15/tutorial-join.html/
+reread article & reread post before sending
+
+https://stackoverflow.com/questions/19267238/what-is-difference-between-inner-join-and-outer-join
+see image before posting
+
+https://www.postgresql.org/docs/current/tutorial-join.html
+Hi, I would like to request a few documentation improvements regarding the join tutorial.
+In the last few paragraphs, it's said that the reader will encounter queries that omit the AS keyword, and
+	recommends this practice in order to save characters.
+
+However, according to the select documentation for alias (https://www.postgresql.org/docs/15/sql-select.html),
+and also under the "Omitting the AS Key Word" section, it says that AS is required if you wish
+to avoid name collisions for keywords, and that it is recommended practice to include it.
+
+"As a general rule, if you get spurious parser errors for commands that use any of the
+listed key words as an identifier, you should try quoting the identifier to see if the problem goes away"
+(https://www.postgresql.org/docs/current/sql-keywords-appendix.html)
+
+Since omitting AS can lead to naming conflicts, would it be helpful in this tutorial to recommend the best
+practices? (and reference the explaining documentation)
+
+I also would like to suggest mentioning that [OUTER] is an optional keyword.
+It is common for OUTER to indicate selecting unrelated values of a table, whereas omitting the keyword 
+is used to indicate selecting all values of a table, related or not.
+Including this would be very helpful to us readers!
+
+Thank you,
+
+Zowie

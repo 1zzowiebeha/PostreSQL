@@ -1,0 +1,56 @@
+-- slow, as joining on a non-indexed/non fk or non pk column
+select t.city_origin, t.city_destination, t.ticket_price,
+       t.travel_time, t.transportation
+from public.one_way_ticket AS t
+JOIN best_10_places AS place
+ON place.closest_city = t.city_destination
+WHERE place.ranking_position = 1
+	AND activity = 'snorkeling'
+	AND t.city_origin = 'Paris';
+
+select t.city_origin, t.city_destination, t.ticket_price,
+       t.travel_time, t.transportation
+FROM public.one_way_ticket AS t
+WHERE t.city_destination = (
+	SELECT p.closest_city
+	FROM best_10_places AS p
+	WHERE activity = 'snorkeling'
+	AND ranking_position = 1
+)
+AND t.city_origin = 'Paris';
+-- paris ✈--- Florianopolis Brazil (ranking=1, activity='snorkeling', origin='paris')
+
+select t.*
+from public.one_way_ticket AS t
+WHERE t.ticket_price < (
+	-- select price from selected ticket for comparison
+	SELECT ticket_price
+	FROM public.one_way_ticket
+	WHERE city_origin = 'Paris'
+	AND city_destination = 'Bariloche'
+)
+AND t.city_origin = 'Paris'; -- limit to only Paris outbound travels
+
+Subquery is executed first
+There is the main query (outer query) and subquery.
+You must always enclose the subquery in parenthesis. ()
+Using the = operator, your subquery should only return 1 row (scalar subquery)
+
+Your subquery must be scalar (return only 1 row)
+if you use these operators (= >= <= < > <>)
+
+Subqueries (exists, in, not in, any/some, all, single row -> functions that accept a subquery):
+EXISTS (WHERE EXISTS ():
+	If at least one row is returned, result is true
+	No rows, result is false
+IN (WHERE expression IN (subquery)):
+	As with EXISTS, it's unwise to assume that the subquery will be evaluated completely.
+	subquery must return only one Column
+	
+
+
+The subquery can refer to variables from the surrounding query, which will act as constants during any one evaluation of the subquery.
+The subquery will generally only be executed long enough to determine whether at least one row is returned, not all the way to completion. It is unwise to write a subquery that has side effects (such as calling sequence functions); whether the side effects occur might be unpredictable.
+Since the result depends only on whether any rows are returned, and not on the contents of those rows, the output list of the subquery is normally unimportant.
+Common practice is to select a constant like 1. SELECT 1 WHERE ....
+Exceptions to this rule occur in things like INTERSECT subqueries

@@ -10,6 +10,13 @@ create table person (
 	PRIMARY KEY (id)
 );
 
+
+
+
+
+
+
+
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Heddie', 'Greenalf', 'hgreenalf1@ucla.edu', 'Female', '12/2/2022', 'PH');
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Lara', 'Tilliards', 'ltilliards2@blogspot.com', 'Bigender', '11/12/2022', 'ID');
 insert into person (first_name, last_name, email, gender, date_of_birth, country_of_birth) values ('Ursola', 'Bousfield', 'ubousfield3@cbsnews.com', 'Female', '6/20/2022', 'ID');

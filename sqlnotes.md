@@ -538,12 +538,160 @@ COMMIT;
 ------------------------------------------
 
 # Exporting query results to CSV
+\copy (query) TO 'path\name.csv' DELIMINATOR ',' CSV HEADER;
+
+[!] Read more about it
+
+# Sequences
+nextvar curval setval
+ALTER SEQUENCE <seq> RESTART WITH <restart>
+
+# Extensions
+Kind of like plugins
+SELECT * FROM pg_available_extensions;
+
+CREATE EXTENSION IF NOT EXISTS "<name>";
+\df List available functions
+
+Idempotent command: works only once, no matter how many times you use it.
+
+# UUIDs
+uuid extension provides further functionality
+SELECT gen_random_uuid();
+
+Benefits of UUID as primary key:
+    Attacker can't iterate over user ids
+    Merging database data has no risk of id collision
+
+Use generated always as ( gen_random_uuid() ) stored, in order to autogen uuids.
+[!] If you are changing from id to uid on your table creation, CTRL+F
+    to save time on silly errors
+[!] Foreign key constraint on the same line as the column name 
+    mitigates this user error.
+
+[?] GUUID?
+
+```sql
+CREATE TABLE car (
+   car_uid UUID NOT NULL,
+   make VARCHAR(100),
+   model VARCHAR(100),
+   price NUMERIC(19,2) NOT NULL CHECK (price > 0),
+
+   PRIMARY KEY (id)
+);
+CREATE TABLE person (
+    -- cannot insert custom id; always generated.
+    person_uid UUID NOT NULL GENERATED ALWAYS AS ( gen_random_uuid() ) STORED,
+    first_name VARCHAR NOT NULL,
+    last_name VARCHAR NOT NULL,
+    gender VARCHAR NOT NULL,
+    email VARCHAR NOT NULL,
+    date_of_birth VARCHAR NOT NULL,
+    country_of_birth VARCHAR NOT NULL,
+    car_uid UUID NOT NULL FOREIGN KEY (car_uid) REFERENCES car (car_uid),
+    deleted BOOLEAN NOT NULL DEFAULT false,
+    UNIQUE(car_uid, email),
+
+    PRIMARY KEY (id)
+);
+```
+
+Same thing!!!! USING if fk/pk have the same name
+-----
+-- only people without a car
+SELECT * FROM person
+(left/right/inner/outer) JOIN car USING (car_uid);
+-- WHERE car.* IS NULL; 
+
+SELECT * FROM person
+(left/right/inner/outer) JOIN car ON person.car_uid = car.car_uid;
+-- WHERE car.* IS NULL; 
+--------
+
+USING is useful if both the parent foreign key and child primary key fields have the same
+    column name.
 
 
 ##### My own research:
 
+# more join stuff
+    For clarity, make use of optional OUTER keyword
+        to indicate null foreign keys, or foreign keys that don't correspond to a different table row.
+        cross join: generate cartesian coordinate (combinations)
 
+# Ordering:
+ALWAYS use orderby when order matters
+Postgre order can change randomly if it is more perfomant
 
+^^^^ [!!!!]
+# qualified columns
+(note: always use fully qualified schema)
+Since the columns all had different names, the parser automatically found which table they belong to. If there were duplicate column names in the two tables you'd need to qualify the column names to show which one you meant, as in:
+
+SELECT weather.city, weather.temp_lo, weather.temp_hi,
+       weather.prcp, weather.date, cities.location
+    FROM weather JOIN cities ON weather.city = cities.name;
+
+better:
+SELECT w.city, w.temp_lo, w.temp_hi, w.prcp, w.date, c.location
+FROM public.weather as w
+JOIN public.cities as c
+ON w.city = c.name;
+
+It is widely considered good style to qualify all column names in a join query, so that the query won't fail if a duplicate column name is later added to one of the tables.
+  
+# Junction Table / Lookup table / Bridge Table / Many-To-Many
+    author - author_book - book
+    Virtual Tables are created internally for joins
+    https://learnsql.com/blog/multiple-join/ Take a look at the Relational Diagram
+    [!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!] A junction table can include non-relational fields!
+        Maybe a doctor - appointment - patient table set, where
+        .. appointment includes time,date,location                
+
+    ``` sql
+    select
+        d.name as 'Doctor',
+        p.name as 'Patient',
+        a.date,
+        a.time
+    from doctor d
+    inner join appointment a on d.id = a.doctor_id -- virtual table formed: doctor+appointment
+    inner join patient p on a.patient_id = p.id; -- virtual table joined to patient
+
+    -- Idea of virtual tables is very important!!!!
+    -- It allows us to conceptualize a Star Schema! Junction + 3 or more tables!
+    ```
+# ERD
+https://www.databasestar.com/entity-relationship-diagram/
+Entity: rectangle. represents a noun
+    Weak entity: has a foreign key. dependent on another entity
+    Strong entity: primary key. does not depend on other entities
+Relationship: lines between two entities
+    one to one
+    one to many
+    many to many
+Attribute:
+    Simple: Cannot be split into other attributes
+    Composite: Can be split into other attributes (first, last, middle name)
+    Derived: Calculated or determined from another attribute (age based on created date)
+    
+    Single values: captured once
+    Multi value: Captured more than once for a single entity (multiple phone numbers)
+Cardinality: 
+    Number of entities that exist between a relationship of two entities.
+    Common cardinalities are zero, one, or many.
+Natural Language:
+    
+# Foreign Keys:
+Table with a foreign key is a child
+Table being referenced is the parent
+Table can have multiple foreign keys.
+
+The CONSTRAINT clause is optional. If you omit it, PostgreSQL will assign an auto-generated name.
+
+Delete and Update actions determine what happens to the child
+  .. when the parent's primary key is updated or removed (parent column/row)
 
 
 ####

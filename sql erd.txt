@@ -1,0 +1,5 @@
+strong independent woman.. (only primary keys)     weak dependent on strong (has a foreign key). Simple Attr: atomic column. Composite: Combined column (first+last=name). Derived: calculated from another attribute (age coming from creation_date)
+Single-value attr: captured once
+Multi-value attr: captured more than once (like an array, or phone1 phone2 columns)
+
+Cardinality: # of instances (one,zero,many)

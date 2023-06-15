@@ -1,0 +1,35 @@
+create table player (
+	player_id uuid primary key not null generated always as (gen_random_uuid()),
+	creation_date date not null generated always as (now()),
+	last_login timestamptz not null default (now()),
+	is_online boolean not null default true, -- first creation
+	banned boolean not null default false
+);
+
+create table role (
+	role_id bigint generated always as identity,
+	role_name text not null,
+);
+
+create table player_role (
+	-- junction
+);
+
+create table inventory (
+	player_id uuid references player(player_id) not null,
+	item text not null,
+	quantity int not null,
+    primary key (player_id, item)
+);
+
+
+
+--------------------
+insert into player values ();
+insert into inventory (item,quantity) values ('elf',240);
+
+primary key can include foreign key column....
+Changes Everything.... Wow.
+
+If you do not include NOT NULL for foreign key, it can be null. however when you insert a foreign key column,
+	the parent must exist.
