@@ -71,3 +71,24 @@ The grouped columns will, by definition, be the same value so we don’t have to
 The remaining, ungrouped columns will need to use an aggregate function so they know how to be merged together. 
 
 Group by groups distinct columns/column combinations, and allows an aggregate function to be performed on these groups.
+
+
+#############################
+
+
+Joins / subqueries
+
+Think of joins as a virtual table (one copy table in memory that gets modified during joins). 
+It's handled more intelligently under the hood.
+
+```sql
+SELECT bk.starttime, fac.name
+FROM cd.bookings as bk
+INNER JOIN cd.facilities as fac
+ON bk.facid = fac.facid
+WHERE fac.name LIKE 'Tennis Court _%' -- at least one digit
+AND bk.starttime >= '2012-09-21' -- more efficient to directly compare, than a conversion and single compare?
+AND bk.starttime < '2012-09-22' -- date format is yyyy-mm-dd
+                                -- better than between, as between has some issues
+ORDER BY bk.starttime;
+```

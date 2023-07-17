@@ -284,7 +284,7 @@ SELECT * FROM person
 WHERE date_joined
 BETWEEN DATE '2000-02-23' AND '2023-02-17';
 
-Don't use between. Use greater than/less than operators.
+[!!!] Don't use between. Use greater than/less than operators.
 
 # Like and iLike
 
@@ -294,6 +294,9 @@ SELECT * from person where email like '%@%.___';
 ILike is case-insensitive like
 
 # Group by & Having
+
+-- If you wanted to add up all the numbers you would not have a GROUP BY:
+-- The point of the GROUP BY is that you get a separate total for each employee.
 
 Group by allows you to group columns and functions within the same selection.
 

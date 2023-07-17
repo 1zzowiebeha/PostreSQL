@@ -18,20 +18,17 @@ insert into employees values
 -- all records in left table (related and unrelated)
 select *
 from employees e
-left join employees m on e.managerid = m.id;
-
--- all records in right table (related and unrelated)
-select *
-from employees e
-right join employees m on e.managerid = m.id;
+left join employees m on e.managerid = m.id
+order by e.id;
 
 -- all records in right table (related and unrelated)
 select *
 from employees e
 right join employees m on e.managerid = m.id
-order by m.id;
+order by m.id asc;
 
 -- all related records in both tables
 select *
 from employees e
-join employees m on e.managerid = m.id;
+join employees m on e.managerid = m.id
+order by e.id;
