@@ -614,6 +614,8 @@ SELECT * FROM person
 
 USING is useful if both the parent foreign key and child primary key fields have the same
     column name.
+    
+Don't use it. If you do, you might be using a column already present in the virtual table.
 
 
 ##### My own research:
