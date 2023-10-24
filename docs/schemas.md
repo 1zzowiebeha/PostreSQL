@@ -42,6 +42,7 @@ When referencing objects, the first schema of search_path is used
 search_path resets every session.
 
 > how to set a session default search_path?
+	`alter role x set search_path '';`
 > Answer: That is a secure schema usage pattern! modify postgresql.conf or alter role and set search_path = "$user"
 
 pg_catalog  is part of the search path
