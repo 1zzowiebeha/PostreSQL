@@ -6,5 +6,30 @@ other columns you select, all in a single selection.
 Nope ^
 
 
-GROUP BY allows the selection of distinct columns to be paired with Aggregate Functions
+GROUP BY allows the selection of distinct columns
+and columns of these groups to be paired with Aggregate Functions
 into a singular table output.
+
+Proof:
+
+-- selects distinct companies, which are groups that can be paired with agg functions.
+select company
+from products
+group by company;
+
+
+All columns selected must either be included in GROUP BY, or they must be
+paired with Aggregate Functions.
+
+WHERE filters before the columns are aggregated.
+HAVING filters after the columns are aggregated.
+
+
+------
+SELECT typewriter_brand,
+ AVG(price) AS average_price
+FROM typewriter_products
+GROUP BY typewriter_brand;
+
+This query groups data by the typewriter brand,
+and calculates the average price of all rows in the group.
