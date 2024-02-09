@@ -1,0 +1,1 @@
+https://learnsql.com/blog/illustrated-guide-sql-cross-join-2/

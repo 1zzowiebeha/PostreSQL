@@ -21,9 +21,25 @@ group by company;
 All columns selected must either be included in GROUP BY, or they must be
 paired with Aggregate Functions.
 
+If a column is used in select & is not in an aggregate function,
+it must be included in GROUP BY.
+
 WHERE filters before the columns are aggregated.
 HAVING filters after the columns are aggregated.
 
+You can group by and not include the grouped column
+in the selected results. Rows will have correspondence
+to groups, but you might not know which groups they belong to.
+
+-- select total # rows that share the same company_name
+-- lacks company_name in the results, so results are kind of ambiguous.
+SELECT COUNT(*) -- , company_name
+FROM typewriter_products
+GROUP BY company_name;
+
+-- select total # rows in typewriter_products
+SELECT COUNT(*)
+FROM typewriter_products;
 
 ------
 SELECT typewriter_brand,
@@ -33,3 +49,18 @@ GROUP BY typewriter_brand;
 
 This query groups data by the typewriter brand,
 and calculates the average price of all rows in the group.
+
+
+
+# why no work?
+# figure it out :
+# https://learnsql.com/blog/how-to-use-group-by/
+
+SELECT joindate as latest
+FROM cd.members
+GROUP BY 1
+HAVING joindate = MAX(joindate)
+ORDER BY 1 DESC;
+
+select '2012-09-26 18:08:45'::timestamptz = (select max(joindate) from cd.members);
+> true

@@ -58,3 +58,9 @@ UNION removes duplicate rows.
 UNION ALL does not.
 
 Use UNION ALL as a default, unless you want to remove duplicate rows :-]
+
+
+
+-- What's the most expensive facility to maintain on a monthly basis?
+-- Who has recommended the most new members?
+-- How much time has each member spent at our facilities?
