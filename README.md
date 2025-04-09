@@ -1,1 +1,1 @@
-Here are my notes for PostgreSQL. As of 4/8/25, my knowledge has atrophied quite a bit, but I plan to make a come back into PostgreSQL as I make a return from Web Design into front-end or back-end web development.
+Here are my notes for PostgreSQL. As of 4/8/25, my knowledge has atrophied quite a bit, but I strongly burn to return to PostgreSQL as I make a return from Web Design into front-end or back-end web development.
