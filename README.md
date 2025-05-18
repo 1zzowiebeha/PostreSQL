@@ -1,2 +1,2 @@
 # About
-Here I store my notes for PostgreSQL.
+Here is where I store my notes for PostgreSQL.
